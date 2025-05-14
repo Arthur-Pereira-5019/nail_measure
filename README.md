@@ -1,4 +1,4 @@
-# nail_measure
+# Flutter Nail Measurer
 
 My first flutter project, made originally as a gift for valentines day.
 
