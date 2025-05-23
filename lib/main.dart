@@ -10,11 +10,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Nail Measurer',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Medidor de Unhas'),
     );
   }
 }
@@ -29,31 +29,16 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+        child: Stack(
+          
           children: <Widget>[
-            /*Text('You have pushed the button this many times:'), // Text
-            Text('$_counter', style: Theme.of(context).textTheme.displayLarge),*/
-             SizedBox(
-              width: 60,
-              height: 40,
-              child: TextField(
 
-              )
-             ),
             Container(
               alignment: Alignment.bottomCenter,
               decoration: BoxDecoration(
@@ -66,13 +51,24 @@ class _MyHomePageState extends State<MyHomePage> {
                 image: AssetImage((('resources/left_hand.png'))),
               ),
             ),
+            
+             Positioned(
+              top: 400,
+              right: 200,
+              child: SizedBox(
+              width: 100,
+              height: 40,
+                child: TextField(
+                  decoration: InputDecoration(
+                  hintText: '2.5cm'
+                )
+              )
+             )
+             ),
+        
+
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
       ),
     );
   }
