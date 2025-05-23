@@ -29,6 +29,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  var unhas = [0.0,0.0,0.0,0.0,0.0];
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(title: Text(widget.title)),
       body: Center(
         child: Stack(
-          
           children: <Widget>[
-
             Container(
               alignment: Alignment.bottomCenter,
               decoration: BoxDecoration(
@@ -51,22 +50,32 @@ class _MyHomePageState extends State<MyHomePage> {
                 image: AssetImage((('resources/left_hand.png'))),
               ),
             ),
-            
-             Positioned(
-              top: 400,
-              right: 200,
-              child: SizedBox(
-              width: 100,
-              height: 40,
-                child: TextField(
-                  decoration: InputDecoration(
-                  hintText: '2.5cm'
-                )
-              )
-             )
-             ),
-        
 
+            Positioned(
+              top: 175,
+              left: 140,
+              child: SizedBox(
+                width: 60,
+                height: 40,
+                child: TextField(
+                  onChanged: (text) {
+                    unhas[0] = double.parse(text);
+                    print(unhas[0]);
+                  },
+                  decoration: InputDecoration(hintText: '2.5cm'),
+                ),
+              ),
+            ),
+
+            TextButton(
+              style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+              ),
+              onPressed: () {
+
+              },
+              child: Text('Salvar unhas'),
+            ),
           ],
         ),
       ),
