@@ -45,51 +45,24 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: Scrollbar(
-          child: ListView(children: [DisplayUnha(), DisplayUnha(), SaveNail()]),
+          child: ListView(children: [DisplayUnha(type: 1), DisplayUnha(type: 2)]),
         ),
       ),
     );
   }
 }
 
-class InputNail extends StatelessWidget {
-  final double positionTop;
-  final double positionLeft;
 
-  const InputNail({
-    Key? key,
-    required this.positionTop,
-    required this.positionLeft,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      top: positionTop,
-      left: positionLeft,
-      child: SizedBox(
-        width: 60,
-        height: 40,
-        child: TextField(
-          onChanged: (text) {
-            unhas[0] = text;
-            print(unhas[0]);
-          },
-          decoration: InputDecoration(hintText: '2.5cm'),
-        ),
-      ),
-    );
-  }
-}
 
 class SaveNail extends StatelessWidget {
   const SaveNail({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
+    return FloatingActionButton(onPressed: () {},child: Icon(Icons.save), shape: const CircleBorder());
+    /*return TextButton(
       style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+        foregroundColor: MaterialStateProperty.all<Color>(const Color.fromARGB(255, 173, 0, 69)),
       ),
       onPressed: () {
         Navigator.push(
@@ -98,7 +71,7 @@ class SaveNail extends StatelessWidget {
         );
       },
       child: Text('Salvar unhas'),
-    );
+    );*/
   }
 }
 
@@ -229,11 +202,15 @@ class NailTable extends StatelessWidget {
 }
 
 class DisplayUnha extends StatelessWidget {
-  const DisplayUnha({super.key});
+  final int type;
+  const DisplayUnha({super.key, required this.type});
+
+  //TODO: BORDA
 
   @override
   Widget build(BuildContext context) {
     return Stack(
+      alignment: Alignment.center,
       children: [
         Container(
           alignment: Alignment.bottomCenter,
@@ -248,12 +225,49 @@ class DisplayUnha extends StatelessWidget {
           ),
         ),
 
-        InputNail(positionTop: 175, positionLeft: 140),
-        InputNail(positionTop: 130, positionLeft: 220),
-        InputNail(positionTop: 110, positionLeft: 295),
-        InputNail(positionTop: 135, positionLeft: 355),
-        InputNail(positionTop: 280, positionLeft: 400),
+        InputNail(positionTop: 175, positionLeft: 620),
+        InputNail(positionTop: 130, positionLeft: 680),
+        InputNail(positionTop: 110, positionLeft: 770),
+        InputNail(positionTop: 135, positionLeft: 815),
+        InputNail(positionTop: 280, positionLeft: 870),
+
+        if(type == 2) ...{
+          Align(alignment: Alignment.bottomCenter, child:  SaveNail())
+         
+        }
       ],
     );
+  }
+}
+
+class InputNail extends StatelessWidget {
+  final double positionTop;
+  final double positionLeft;
+
+
+  const InputNail({
+    super.key,
+    required this.positionTop,
+    required this.positionLeft,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return
+     Positioned(
+      top: positionTop,
+      left: positionLeft,
+      child: SizedBox(
+        width: 60,
+        height: 40,
+        child: TextField(
+          onChanged: (text) {
+            unhas[0] = text;
+            print(unhas[0]);
+          },
+          decoration: InputDecoration(hintText: '2.5cm'),
+        ),
+      ),
+     );
   }
 }
