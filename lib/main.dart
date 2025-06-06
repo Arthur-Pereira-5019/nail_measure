@@ -1,10 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:nail_measure/nailRegister.dart';
+import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-var unhas = ["0.0", "0.0", "0.0", "0.0", "0.0"];
+
+double a = 0;
+double b = 0;
+double c = 0;
+double d = 0;
+double e = 0;
+double f = 0;
+double g = 0;
+double h = 0;
+double i = 0;
+double j = 0;
+NailDatabase db = NailDatabase();
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  db.createDatabase;
+  databaseFactory = databaseFactoryFfi;
   runApp(const MyApp());
 }
 
@@ -44,40 +61,47 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: Center(
-        child: Scrollbar(
-          child: ListView(children: [DisplayUnha(type: 1), DisplayUnha(type: 2)]),
-        ),
+          child: ListView(
+            children: [DisplayUnha(type: 1), DisplayUnha(type: 2)],
+          ),
       ),
     );
   }
 }
-
-
 
 class SaveNail extends StatelessWidget {
   const SaveNail({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return FloatingActionButton(onPressed: () {},child: Icon(Icons.save), shape: const CircleBorder());
-    /*return TextButton(
-      style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all<Color>(const Color.fromARGB(255, 173, 0, 69)),
-      ),
+    return FloatingActionButton(
       onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => Tela2()),
-        );
+        registerNail();
       },
-      child: Text('Salvar unhas'),
-    );*/
+      child: Icon(Icons.save),
+      shape: const CircleBorder(),
+    );
   }
 }
 
 void registerNail() async {
-  final prefs = await SharedPreferences.getInstance();
-  await prefs.setStringList('tamanhoDasUnhas', unhas);
+    print(await getDatabasesPath());
+  db.registerNail(
+    new Nail(
+      id: db.autoIncrement(),
+      data: DateTime.now(),
+      tMiEs: a,
+      tAnEs: b,
+      tMeEs: c,
+      tInEs: d,
+      tPoEs: e,
+      tPoDi: f,
+      tInDi: g,
+      tMeDi: h,
+      tAnDi: i,
+      tMiDi: j,
+    ),
+  );
 }
 
 class Tela2 extends StatelessWidget {
@@ -225,16 +249,20 @@ class DisplayUnha extends StatelessWidget {
           ),
         ),
 
-        InputNail(positionTop: 175, positionLeft: 620),
-        InputNail(positionTop: 130, positionLeft: 680),
-        InputNail(positionTop: 110, positionLeft: 770),
-        InputNail(positionTop: 135, positionLeft: 815),
-        InputNail(positionTop: 280, positionLeft: 870),
-
-        if(type == 2) ...{
-          Align(alignment: Alignment.bottomCenter, child:  SaveNail())
-         
-        }
+        if (type == 1) ...{
+          InputNail(positionTop: 175, positionLeft: 620, key: Key("a")),
+          InputNail(positionTop: 130, positionLeft: 680, key: Key("b")),
+          InputNail(positionTop: 110, positionLeft: 770, key: Key("c")),
+          InputNail(positionTop: 135, positionLeft: 815, key: Key("d")),
+          InputNail(positionTop: 280, positionLeft: 870, key: Key("e")),
+        } else if (type == 2) ...{
+          Align(alignment: Alignment.bottomCenter, child: SaveNail()),
+          InputNail(positionTop: 175, positionLeft: 620, key: Key("f")),
+          InputNail(positionTop: 130, positionLeft: 680, key: Key("g")),
+          InputNail(positionTop: 110, positionLeft: 770, key: Key("h")),
+          InputNail(positionTop: 135, positionLeft: 815, key: Key("i")),
+          InputNail(positionTop: 280, positionLeft: 870, key: Key("j")),
+        },
       ],
     );
   }
@@ -244,7 +272,6 @@ class InputNail extends StatelessWidget {
   final double positionTop;
   final double positionLeft;
 
-
   const InputNail({
     super.key,
     required this.positionTop,
@@ -253,8 +280,7 @@ class InputNail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return
-     Positioned(
+    return Positioned(
       top: positionTop,
       left: positionLeft,
       child: SizedBox(
@@ -262,12 +288,48 @@ class InputNail extends StatelessWidget {
         height: 40,
         child: TextField(
           onChanged: (text) {
-            unhas[0] = text;
-            print(unhas[0]);
+            double temp;
+            try {
+              temp = double.parse(text);
+            } catch (e) {
+              temp = 0;
+            }
+            switch (key.toString().substring(3,4)) {
+              case "a":
+              a = temp;
+              break;
+              case "b":
+              b = temp;
+              break;
+              case "c":
+              c = temp;
+              break;
+              case "d":
+              d = temp;
+              break;
+              case "e":
+              e = temp;
+              break;
+              case "f":
+              f = temp;
+              break;
+              case "g":
+              g = temp;
+              break;
+              case "h":
+              h = temp;
+              break;
+              case "i":
+              i = temp;
+              break;
+              case "j":
+              j = temp;
+              break;
+            }
           },
           decoration: InputDecoration(hintText: '2.5cm'),
         ),
       ),
-     );
+    );
   }
 }

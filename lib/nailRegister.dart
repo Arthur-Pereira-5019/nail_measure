@@ -57,6 +57,15 @@ Future<void> createDatabase() async {
       whereArgs: [id],
     );
   }
+
+  int autoIncrement() {
+    final db = database;
+    String a = db.rawQuery('count(*) from nails').toString();
+    int b = int.parse(a);
+    b++;
+    return b;
+
+  }
 }
 
 class Nail {
