@@ -41,7 +41,10 @@ class MyApp extends StatelessWidget {
       title: 'Nail Measurer',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 106, 0, 109),
+          seedColor: Color.fromARGB(255, 238, 0, 255),
+          primary: Color.fromARGB(255, 118, 0, 164),
+          secondary: Color.fromARGB(255, 255, 0, 225),
+          brightness: Brightness.dark
         ),
         scaffoldBackgroundColor: Theme.of(context).colorScheme.primary,
       ),
@@ -129,11 +132,28 @@ class _NailTablePage extends State<NailTablePage> {
                 opacity: 0.3,
                 child: Image(
                   alignment: Alignment.bottomCenter,
-                  image: AssetImage((('resources/left_hand.png'))),
+                  image: AssetImage((('resources/starry_night.png'))),
                 ),
               ),
             ),
-            NailTable()
+            Container(
+              color: Theme.of(context).colorScheme.primary,
+              child: ListView(
+                children: [
+                  Stack(
+                    children: [
+                      Opacity(opacity: 0.4,
+                      child:  Image(
+                        image: AssetImage('resources/starry_night.jpg')
+                        )),
+                      NailTable()
+                    ]
+                    ),
+                  ]
+                ),
+
+            )
+            
           ],
         ),
       ),
@@ -195,7 +215,7 @@ class _NailTable extends State<NailTable> {
         ],
         rows: nails.map((nail) {
           return DataRow(cells: [
-            DataCell(Text(nail.data.toString())),
+            DataCell(Text(nail.data.toString().substring(0,16))),
             DataCell(Text(nail.tMiEs.toString())),
             DataCell(Text(nail.tAnEs.toString())),
             DataCell(Text(nail.tMeEs.toString())),
@@ -217,8 +237,6 @@ class DisplayUnha extends StatelessWidget {
   final int type;
   const DisplayUnha({super.key, required this.type});
 
-  //TODO: BORDA
-
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -228,6 +246,7 @@ class DisplayUnha extends StatelessWidget {
           alignment: Alignment.bottomCenter,
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.primary,
+            border: Border.all(width: 1,color: Theme.of(context).colorScheme.secondary)
           ),
           height: 560,
           width: 600,
@@ -275,7 +294,7 @@ class InputNail extends StatelessWidget {
         width: 60,
         height: 40,
         child: TextField(
-          style: TextStyle(color: Color.fromARGB(255, 0, 145, 255)),
+          style: TextStyle(color: Color.fromARGB(255, 255, 0, 162)),
           onChanged: (text) {
             double temp;
             try {
@@ -358,6 +377,9 @@ class SeeRegisters extends StatelessWidget {
 }
 
 void registerNail() async {
+
+
+
     db.registerNail(
     new Nail(
       id: await db.autoIncrement(),
