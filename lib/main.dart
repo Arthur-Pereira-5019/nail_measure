@@ -1,10 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:nail_measure/nailRegister.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-
 
 double a = 0;
 double b = 0;
@@ -16,12 +17,18 @@ double g = 0;
 double h = 0;
 double i = 0;
 double j = 0;
+double platformOffset = 0;
 NailDatabase db = NailDatabase();
 
-void main() {
+void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  db.createDatabase;
-  databaseFactory = databaseFactoryFfi;
+  if(!Platform.isAndroid) {
+      databaseFactory = databaseFactoryFfi;
+  }else {
+    platformOffset = 580;
+    print("Tá no android mermo");
+  }
+  await db.createDatabase();
   runApp(const MyApp());
 }
 
@@ -34,7 +41,7 @@ class MyApp extends StatelessWidget {
       title: 'Nail Measurer',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 183, 0, 255),
+          seedColor: const Color.fromARGB(255, 106, 0, 109),
         ),
         scaffoldBackgroundColor: Theme.of(context).colorScheme.primary,
       ),
@@ -69,41 +76,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class SaveNail extends StatelessWidget {
-  const SaveNail({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: () {
-        registerNail();
-      },
-      child: Icon(Icons.save),
-      shape: const CircleBorder(),
-    );
-  }
-}
-
-void registerNail() async {
-    print(await getDatabasesPath());
-  db.registerNail(
-    new Nail(
-      id: db.autoIncrement(),
-      data: DateTime.now(),
-      tMiEs: a,
-      tAnEs: b,
-      tMeEs: c,
-      tInEs: d,
-      tPoEs: e,
-      tPoDi: f,
-      tInDi: g,
-      tMeDi: h,
-      tAnDi: i,
-      tMiDi: j,
-    ),
-  );
-}
-
 class Tela2 extends StatelessWidget {
   const Tela2({
     super.key,
@@ -117,7 +89,7 @@ class Tela2 extends StatelessWidget {
       title: 'Dados das Unhas',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 131, 32, 79),
+          seedColor: const Color.fromARGB(255, 255, 132, 189),
         ),
         scaffoldBackgroundColor: Theme.of(context).colorScheme.primary,
       ),
@@ -161,6 +133,7 @@ class _NailTablePage extends State<NailTablePage> {
                 ),
               ),
             ),
+            NailTable()
           ],
         ),
       ),
@@ -168,59 +141,74 @@ class _NailTablePage extends State<NailTablePage> {
   }
 }
 
-class NailTable extends StatelessWidget {
-  //final double positionTop;
-  //final double positionLeft;
+class NailTable extends StatefulWidget  {
 
   const NailTable({
     super.key,
-    //required this.positionTop,
-    //required this.positionLeft,
   });
 
   @override
+   _NailTable createState() => _NailTable();
+}
+
+class _NailTable extends State<NailTable> {
+  List<Nail> nails = [];
+  bool loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    loadNails();
+  }
+
+  Future<void> loadNails() async {
+      final a = await db.nailMaps();
+      nails = a.map((m) => Nail.fromMap(m)).toList();
+    
+    
+    setState((){
+      loading = false;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return DataTable(
-      columns: const <DataColumn>[
-        DataColumn(
-          label: Expanded(
-            child: Text('Name', style: TextStyle(fontStyle: FontStyle.italic)),
-          ),
-        ),
-        DataColumn(
-          label: Expanded(
-            child: Text('Age', style: TextStyle(fontStyle: FontStyle.italic)),
-          ),
-        ),
-        DataColumn(
-          label: Expanded(
-            child: Text('Role', style: TextStyle(fontStyle: FontStyle.italic)),
-          ),
-        ),
-      ],
-      rows: const <DataRow>[
-        DataRow(
-          cells: <DataCell>[
-            DataCell(Text('Sarah')),
-            DataCell(Text('19')),
-            DataCell(Text('Student')),
-          ],
-        ),
-        DataRow(
-          cells: <DataCell>[
-            DataCell(Text('Janine')),
-            DataCell(Text('43')),
-            DataCell(Text('Professor')),
-          ],
-        ),
-        DataRow(
-          cells: <DataCell>[
-            DataCell(Text('William')),
-            DataCell(Text('27')),
-            DataCell(Text('Associate Professor')),
-          ],
-        ),
-      ],
+    if (loading) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: DataTable(
+        columns: const [
+          DataColumn(label: Text('Data')),
+          DataColumn(label: Text('Min. Esq.')),
+          DataColumn(label: Text('Ane. Esq.')),
+          DataColumn(label: Text('Mei. Esq.')),
+          DataColumn(label: Text('Ind. Esq.')),
+          DataColumn(label: Text('Pol. Esq.')),
+          DataColumn(label: Text('Min. Dir.')),
+          DataColumn(label: Text('Ane. Dir.')),
+          DataColumn(label: Text('Mei. Dir.')),
+          DataColumn(label: Text('Ind. Dir.')),
+          DataColumn(label: Text('Pol. Dir.')),
+        ],
+        rows: nails.map((nail) {
+          return DataRow(cells: [
+            DataCell(Text(nail.data.toString())),
+            DataCell(Text(nail.tMiEs.toString())),
+            DataCell(Text(nail.tAnEs.toString())),
+            DataCell(Text(nail.tMeEs.toString())),
+            DataCell(Text(nail.tInEs.toString())),
+            DataCell(Text(nail.tPoEs.toString())),
+            DataCell(Text(nail.tMiDi.toString())),
+            DataCell(Text(nail.tAnDi.toString())),
+            DataCell(Text(nail.tMeDi.toString())),
+            DataCell(Text(nail.tInDi.toString())),
+            DataCell(Text(nail.tPoDi.toString())),
+          ]);
+        }).toList(),
+      ),
     );
   }
 }
@@ -248,20 +236,20 @@ class DisplayUnha extends StatelessWidget {
             image: AssetImage((('resources/left_hand.png'))),
           ),
         ),
-
         if (type == 1) ...{
-          InputNail(positionTop: 175, positionLeft: 620, key: Key("a")),
-          InputNail(positionTop: 130, positionLeft: 680, key: Key("b")),
-          InputNail(positionTop: 110, positionLeft: 770, key: Key("c")),
-          InputNail(positionTop: 135, positionLeft: 815, key: Key("d")),
-          InputNail(positionTop: 280, positionLeft: 870, key: Key("e")),
+          InputNail(positionTop: 175, positionLeft: 620-platformOffset, key: Key("a")),
+          InputNail(positionTop: 130, positionLeft: 680-platformOffset, key: Key("b")),
+          InputNail(positionTop: 110, positionLeft: 770-platformOffset, key: Key("c")),
+          InputNail(positionTop: 135, positionLeft: 815-platformOffset, key: Key("d")),
+          InputNail(positionTop: 280, positionLeft: 870-platformOffset, key: Key("e")),
         } else if (type == 2) ...{
-          Align(alignment: Alignment.bottomCenter, child: SaveNail()),
-          InputNail(positionTop: 175, positionLeft: 620, key: Key("f")),
-          InputNail(positionTop: 130, positionLeft: 680, key: Key("g")),
-          InputNail(positionTop: 110, positionLeft: 770, key: Key("h")),
-          InputNail(positionTop: 135, positionLeft: 815, key: Key("i")),
-          InputNail(positionTop: 280, positionLeft: 870, key: Key("j")),
+          Container(height: 560, width: 600, alignment: Alignment.bottomLeft, child: SaveNail()),
+          Container(height: 560, width: 600, alignment: Alignment.bottomRight, child: SeeRegisters()),
+          InputNail(positionTop: 175, positionLeft: 620-platformOffset, key: Key("f")),
+          InputNail(positionTop: 130, positionLeft: 680-platformOffset, key: Key("g")),
+          InputNail(positionTop: 110, positionLeft: 770-platformOffset, key: Key("h")),
+          InputNail(positionTop: 135, positionLeft: 815-platformOffset, key: Key("i")),
+          InputNail(positionTop: 280, positionLeft: 870-platformOffset, key: Key("j")),
         },
       ],
     );
@@ -287,6 +275,7 @@ class InputNail extends StatelessWidget {
         width: 60,
         height: 40,
         child: TextField(
+          style: TextStyle(color: Color.fromARGB(255, 0, 145, 255)),
           onChanged: (text) {
             double temp;
             try {
@@ -327,9 +316,62 @@ class InputNail extends StatelessWidget {
               break;
             }
           },
-          decoration: InputDecoration(hintText: '2.5cm'),
+          decoration: InputDecoration(hintText: '2.5cm', hintStyle: TextStyle(color: Color.fromARGB(255, 255, 255, 255)))
+          ),
         ),
-      ),
+      );
+  }
+}
+
+class SaveNail extends StatelessWidget {
+  const SaveNail({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: () {
+        registerNail();
+      },
+      child: Icon(Icons.save),
+      shape: const CircleBorder(),
     );
   }
+}
+
+class SeeRegisters extends StatelessWidget {
+  const SeeRegisters({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      heroTag: 'registers',
+      onPressed: () {
+        Navigator.push(
+  context,
+  MaterialPageRoute(builder: (context) => const NailTablePage(title: "Registros")),
+);
+      },
+      shape: const CircleBorder(),
+      child: Icon(Icons.menu),
+    );
+  }
+}
+
+void registerNail() async {
+    db.registerNail(
+    new Nail(
+      id: await db.autoIncrement(),
+      data: DateTime.now(),
+      tMiEs: a,
+      tAnEs: b,
+      tMeEs: c,
+      tInEs: d,
+      tPoEs: e,
+      tPoDi: f,
+      tInDi: g,
+      tMeDi: h,
+      tAnDi: i,
+      tMiDi: j,
+    ),
+  );
 }

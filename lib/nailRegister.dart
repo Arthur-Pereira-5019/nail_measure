@@ -37,6 +37,11 @@ Future<void> createDatabase() async {
   return nailMaps.map((map) => Nail.fromMap(map)).toList();
 }
 
+Future<List<Map<String, Object?>>> nailMaps() async {
+  final db = database;
+  return await db.query('nails');
+}
+
   Future<void> updateNail(Nail nail) async {
     final db = database;
 
@@ -58,11 +63,10 @@ Future<void> createDatabase() async {
     );
   }
 
-  int autoIncrement() {
+  Future<int> autoIncrement() async{
     final db = database;
-    String a = db.rawQuery('count(*) from nails').toString();
-    int b = int.parse(a);
-    b++;
+    final a = await db.rawQuery('select count(*) from nails');
+    int b = Sqflite.firstIntValue(a) ?? 0;
     return b;
 
   }
@@ -87,7 +91,7 @@ class Nail {
     Map<String, Object?> toMap() {
     return {
       'id': id,
-      'date': data.toIso8601String(),
+      'data': data.toIso8601String(),
       'tMiEs': tMiEs,
       'tAnEs': tAnEs,
       'tMeEs': tMeEs,
