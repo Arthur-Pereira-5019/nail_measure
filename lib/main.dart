@@ -20,11 +20,11 @@ double j = 0;
 double platformOffset = 0;
 NailDatabase db = NailDatabase();
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if(!Platform.isAndroid) {
-      databaseFactory = databaseFactoryFfi;
-  }else {
+  if (!Platform.isAndroid) {
+    databaseFactory = databaseFactoryFfi;
+  } else {
     platformOffset = 580;
     print("Tá no android mermo");
   }
@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
           seedColor: Color.fromARGB(255, 238, 0, 255),
           primary: Color.fromARGB(255, 118, 0, 164),
           secondary: Color.fromARGB(255, 255, 0, 225),
-          brightness: Brightness.dark
+          brightness: Brightness.dark,
         ),
         scaffoldBackgroundColor: Theme.of(context).colorScheme.primary,
       ),
@@ -71,16 +71,14 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: Center(
-          child: ListView(
-            children: [DisplayUnha(type: 1), DisplayUnha(type: 2)],
-          ),
+        child: ListView(children: [DisplayNail(type: 1), DisplayNail(type: 2)]),
       ),
     );
   }
 }
 
-class Tela2 extends StatelessWidget {
-  const Tela2({
+class Screen2 extends StatelessWidget {
+  const Screen2({
     super.key,
     //required this.positionTop,
     //required this.positionLeft,
@@ -142,18 +140,18 @@ class _NailTablePage extends State<NailTablePage> {
                 children: [
                   Stack(
                     children: [
-                      Opacity(opacity: 0.4,
-                      child:  Image(
-                        image: AssetImage('resources/starry_night.jpg')
-                        )),
-                      NailTable()
-                    ]
-                    ),
-                  ]
-                ),
-
-            )
-            
+                      Opacity(
+                        opacity: 0.4,
+                        child: Image(
+                          image: AssetImage('resources/starry_night.jpg'),
+                        ),
+                      ),
+                      NailTable(),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -161,14 +159,11 @@ class _NailTablePage extends State<NailTablePage> {
   }
 }
 
-class NailTable extends StatefulWidget  {
-
-  const NailTable({
-    super.key,
-  });
+class NailTable extends StatefulWidget {
+  const NailTable({super.key});
 
   @override
-   _NailTable createState() => _NailTable();
+  _NailTable createState() => _NailTable();
 }
 
 class _NailTable extends State<NailTable> {
@@ -182,11 +177,10 @@ class _NailTable extends State<NailTable> {
   }
 
   Future<void> loadNails() async {
-      final a = await db.nailMaps();
-      nails = a.map((m) => Nail.fromMap(m)).toList();
-    
-    
-    setState((){
+    final a = await db.nailMaps();
+    nails = a.map((m) => Nail.fromMap(m)).toList();
+
+    setState(() {
       loading = false;
     });
   }
@@ -213,32 +207,39 @@ class _NailTable extends State<NailTable> {
           DataColumn(label: Text('Ind. Dir.')),
           DataColumn(label: Text('Pol. Dir.')),
         ],
-        rows: nails.map((nail) {
-          return DataRow(cells: [
-            DataCell(Text(nail.data.toString().substring(0,16))),
-            DataCell(Text(nail.tMiEs.toString())),
-            DataCell(Text(nail.tAnEs.toString())),
-            DataCell(Text(nail.tMeEs.toString())),
-            DataCell(Text(nail.tInEs.toString())),
-            DataCell(Text(nail.tPoEs.toString())),
-            DataCell(Text(nail.tMiDi.toString())),
-            DataCell(Text(nail.tAnDi.toString())),
-            DataCell(Text(nail.tMeDi.toString())),
-            DataCell(Text(nail.tInDi.toString())),
-            DataCell(Text(nail.tPoDi.toString())),
-          ]);
-        }).toList(),
+        rows:
+            nails.map((nail) {
+              return DataRow(
+                cells: [
+                  DataCell(Text(nail.data.toString().substring(0, 16))),
+                  DataCell(Text(nail.tMiEs.toString())),
+                  DataCell(Text(nail.tAnEs.toString())),
+                  DataCell(Text(nail.tMeEs.toString())),
+                  DataCell(Text(nail.tInEs.toString())),
+                  DataCell(Text(nail.tPoEs.toString())),
+                  DataCell(Text(nail.tMiDi.toString())),
+                  DataCell(Text(nail.tAnDi.toString())),
+                  DataCell(Text(nail.tMeDi.toString())),
+                  DataCell(Text(nail.tInDi.toString())),
+                  DataCell(Text(nail.tPoDi.toString())),
+                ],
+              );
+            }).toList(),
       ),
     );
   }
 }
 
-class DisplayUnha extends StatelessWidget {
+class DisplayNail extends StatelessWidget {
   final int type;
-  const DisplayUnha({super.key, required this.type});
+  const DisplayNail({super.key, required this.type});
 
   @override
   Widget build(BuildContext context) {
+    String handName = 'Direita';
+    if(type == 2) {
+      handName = 'Esquerda';
+    }
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -246,7 +247,10 @@ class DisplayUnha extends StatelessWidget {
           alignment: Alignment.bottomCenter,
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.primary,
-            border: Border.all(width: 1,color: Theme.of(context).colorScheme.secondary)
+            border: Border.all(
+              width: 1,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
           ),
           height: 560,
           width: 600,
@@ -255,20 +259,79 @@ class DisplayUnha extends StatelessWidget {
             image: AssetImage((('resources/left_hand.png'))),
           ),
         ),
+        Positioned(
+        top: 20,
+        left: 20,
+        child:
+        Container(
+          decoration: BoxDecoration(border: Border.all(color: Colors.white,width: 1)),
+          child: Text('Mão $handName'),
+        )
+        ),
         if (type == 1) ...{
-          InputNail(positionTop: 175, positionLeft: 620-platformOffset, key: Key("a")),
-          InputNail(positionTop: 130, positionLeft: 680-platformOffset, key: Key("b")),
-          InputNail(positionTop: 110, positionLeft: 770-platformOffset, key: Key("c")),
-          InputNail(positionTop: 135, positionLeft: 815-platformOffset, key: Key("d")),
-          InputNail(positionTop: 280, positionLeft: 870-platformOffset, key: Key("e")),
+          InputNail(
+            positionTop: 175,
+            positionLeft: 620 - platformOffset,
+            key: Key("a"),
+          ),
+          InputNail(
+            positionTop: 130,
+            positionLeft: 680 - platformOffset,
+            key: Key("b"),
+          ),
+          InputNail(
+            positionTop: 110,
+            positionLeft: 770 - platformOffset,
+            key: Key("c"),
+          ),
+          InputNail(
+            positionTop: 135,
+            positionLeft: 815 - platformOffset,
+            key: Key("d"),
+          ),
+          InputNail(
+            positionTop: 280,
+            positionLeft: 870 - platformOffset,
+            key: Key("e"),
+          ),
         } else if (type == 2) ...{
-          Container(height: 560, width: 600, alignment: Alignment.bottomLeft, child: SaveNail()),
-          Container(height: 560, width: 600, alignment: Alignment.bottomRight, child: SeeRegisters()),
-          InputNail(positionTop: 175, positionLeft: 620-platformOffset, key: Key("f")),
-          InputNail(positionTop: 130, positionLeft: 680-platformOffset, key: Key("g")),
-          InputNail(positionTop: 110, positionLeft: 770-platformOffset, key: Key("h")),
-          InputNail(positionTop: 135, positionLeft: 815-platformOffset, key: Key("i")),
-          InputNail(positionTop: 280, positionLeft: 870-platformOffset, key: Key("j")),
+          Container(
+            height: 560,
+            width: 600,
+            alignment: Alignment.bottomLeft,
+            child: SaveNail(),
+          ),
+          Container(
+            height: 560,
+            width: 600,
+            alignment: Alignment.bottomRight,
+            child: SeeRegisters(),
+          ),
+          InputNail(
+            positionTop: 175,
+            positionLeft: 620 - platformOffset,
+            key: Key("f"),
+          ),
+          InputNail(
+            positionTop: 130,
+            positionLeft: 680 - platformOffset,
+            key: Key("g"),
+          ),
+          InputNail(
+            positionTop: 110,
+            positionLeft: 770 - platformOffset,
+            key: Key("h"),
+          ),
+          InputNail(
+            positionTop: 135,
+            positionLeft: 815 - platformOffset,
+            key: Key("i"),
+          ),
+          InputNail(
+            positionTop: 280,
+            positionLeft: 870 - platformOffset,
+            key: Key("j"),
+          ),
         },
       ],
     );
@@ -302,43 +365,46 @@ class InputNail extends StatelessWidget {
             } catch (e) {
               temp = 0;
             }
-            switch (key.toString().substring(3,4)) {
+            switch (key.toString().substring(3, 4)) {
               case "a":
-              a = temp;
-              break;
+                a = temp;
+                break;
               case "b":
-              b = temp;
-              break;
+                b = temp;
+                break;
               case "c":
-              c = temp;
-              break;
+                c = temp;
+                break;
               case "d":
-              d = temp;
-              break;
+                d = temp;
+                break;
               case "e":
-              e = temp;
-              break;
+                e = temp;
+                break;
               case "f":
-              f = temp;
-              break;
+                f = temp;
+                break;
               case "g":
-              g = temp;
-              break;
+                g = temp;
+                break;
               case "h":
-              h = temp;
-              break;
+                h = temp;
+                break;
               case "i":
-              i = temp;
-              break;
+                i = temp;
+                break;
               case "j":
-              j = temp;
-              break;
+                j = temp;
+                break;
             }
           },
-          decoration: InputDecoration(hintText: '2.5cm', hintStyle: TextStyle(color: Color.fromARGB(255, 255, 255, 255)))
+          decoration: InputDecoration(
+            hintText: '2.5cm',
+            hintStyle: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
           ),
         ),
-      );
+      ),
+    );
   }
 }
 
@@ -366,9 +432,11 @@ class SeeRegisters extends StatelessWidget {
       heroTag: 'registers',
       onPressed: () {
         Navigator.push(
-  context,
-  MaterialPageRoute(builder: (context) => const NailTablePage(title: "Registros")),
-);
+          context,
+          MaterialPageRoute(
+            builder: (context) => const NailTablePage(title: "Registros"),
+          ),
+        );
       },
       shape: const CircleBorder(),
       child: Icon(Icons.menu),
@@ -377,10 +445,7 @@ class SeeRegisters extends StatelessWidget {
 }
 
 void registerNail() async {
-
-
-
-    db.registerNail(
+  db.registerNail(
     new Nail(
       id: await db.autoIncrement(),
       data: DateTime.now(),

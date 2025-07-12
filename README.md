@@ -1,8 +1,7 @@
 # Flutter Nail Measurer
 
-My first flutter project, made originally as a gift for valentines day.
+My first flutter project, made as a gift for valentines day.
 
-(Expected) Functionalities:
-- Register the size of the user nails.
+Functionalities:
+- Register the size of the user nails and store it locally.
 - Generate a table of the user nail sizes over time.
-- Notificate the user if he doesn't update their nail size in a specified timespan.
